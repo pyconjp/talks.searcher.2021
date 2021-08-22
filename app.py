@@ -49,3 +49,9 @@ class Category:
     @classmethod
     def from_raw_json(cls, categories):
         return cls(**cls.flatten_raw_json(categories))
+
+
+class QuestionAnswer:
+    @staticmethod
+    def flatten_raw_json(question_answers):
+        raise NotImplementedError
