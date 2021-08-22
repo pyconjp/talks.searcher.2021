@@ -9,6 +9,11 @@ def get_single_choice_category_value(category: dict) -> str:
 
 
 @dataclass
+class Speaker:
+    name: str
+
+
+@dataclass
 class Category:
     track: str
     level: str
