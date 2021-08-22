@@ -51,7 +51,12 @@ class Category:
         return cls(**cls.flatten_raw_json(categories))
 
 
+@dataclass
 class QuestionAnswer:
+    elevator_pitch: str
+    audience_prior_knowledge: str
+    audience_take_away: str
+
     @staticmethod
     def flatten_raw_json(question_answers: list[dict]) -> dict[str, str]:
         for qa in question_answers:
@@ -69,3 +74,7 @@ class QuestionAnswer:
             "audience_prior_knowledge": audience_prior_knowledge,
             "audience_take_away": audience_take_away,
         }
+
+    @classmethod
+    def from_raw_json(cls, question_answers):
+        return cls(**cls.flatten_raw_json(question_answers))
