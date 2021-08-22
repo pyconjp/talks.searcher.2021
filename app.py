@@ -134,6 +134,41 @@ class Talks(Sequence):
             talks.append(talk)
         return cls(sorted(talks, key=lambda t: t.id))
 
+    @st.cache
+    def filter_by(self, request: dict) -> "Talks":
+        talks = self.talks
+        if request["tracks"]:
+            talks = [t for t in talks if t.category.track in request["tracks"]]
+        if request["levels"]:
+            talks = [t for t in talks if t.category.level in request["levels"]]
+        if request["keywords"]:
+            # AND検索。case-insensitive。
+            # タイトル・エレベータピッチ・前提知識・持ち帰れるものの部分文字列か（詳細は使っていない）
+            for keyword in request["keywords"]:
+                talks = [
+                    t
+                    for t in talks
+                    if keyword
+                    in "\n".join(
+                        [
+                            t.title,
+                            t.answer.elevator_pitch,
+                            t.answer.audience_prior_knowledge,
+                            t.answer.audience_take_away,
+                        ]
+                    ).lower()
+                ]
+        if request["is_english_only"]:
+            talks = [
+                t
+                for t in talks
+                # speaking_language は Japanese / English
+                if t.category.speaking_language == "English"
+                # slide_language は Japanese only / English only / Both
+                or t.category.slide_language != "Japanese only"
+            ]
+        return self.__class__(talks)
+
 
 # ---------- Variables and functions to be used in Streamlit app ----------
 
@@ -237,6 +272,14 @@ selected_tracks = st.multiselect("Select track", TRACKS)
 selected_levels = st.multiselect("Select audience Python level", PYTHON_LEVELS)
 keyword_input = st.text_input("Keyword in title")
 is_english_only = st.checkbox("Only English talks")
+
+request = {
+    "tracks": set(selected_tracks),
+    "levels": set(selected_levels),
+    "keywords": set(keyword_input.strip().lower().split()),
+    "is_english_only": is_english_only,
+}
+talks = talks.filter_by(request)
 
 st.write("Found:", len(talks))
 
