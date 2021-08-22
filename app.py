@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 
@@ -90,7 +91,36 @@ class Talk:
     speakers: list[Speaker]
 
 
-class Talks:
+@dataclass
+class Talks(Sequence):
+    talks: list[Talk]
+
+    def __len__(self):
+        return len(self.talks)
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return self.__class__(self.talks[key])
+        return self.talks[key]
+
     @classmethod
-    def from_raw_json(data):
-        raise NotImplementedError
+    def from_raw_json(cls, data):
+        talks = []
+        for session in data:
+            speakers = [
+                Speaker(speaker["name"]) for speaker in session["speakers"]
+            ]
+            category = Category.from_raw_json(session["categories"])
+            question_answers = QuestionAnswer.from_raw_json(
+                session["questionAnswers"]
+            )
+            talk = Talk(
+                int(session["id"]),
+                session["title"],
+                session["description"],
+                category,
+                question_answers,
+                speakers,
+            )
+            talks.append(talk)
+        return cls(sorted(talks, key=lambda t: t.id))
