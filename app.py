@@ -53,5 +53,19 @@ class Category:
 
 class QuestionAnswer:
     @staticmethod
-    def flatten_raw_json(question_answers):
-        raise NotImplementedError
+    def flatten_raw_json(question_answers: list[dict]) -> dict[str, str]:
+        for qa in question_answers:
+            if qa["question"] == "Elevator Pitch":
+                elevator_pitch = qa["answer"]
+                continue
+            if qa["question"] == "オーディエンスに求める前提知識":
+                audience_prior_knowledge = qa["answer"]
+                continue
+            if qa["question"] == "オーディエンスが持って帰れる具体的な知識やノウハウ":
+                audience_take_away = qa["answer"]
+                continue
+        return {
+            "elevator_pitch": elevator_pitch,
+            "audience_prior_knowledge": audience_prior_knowledge,
+            "audience_take_away": audience_take_away,
+        }
