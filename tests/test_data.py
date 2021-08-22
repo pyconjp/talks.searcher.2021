@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from app import Category, QuestionAnswer
+from app import Category, QuestionAnswer, Speaker, Talk, Talks
 
 
 class CategoryTestCase(TestCase):
@@ -58,5 +58,74 @@ class QuestionAnswerTestCase(TestCase):
         }
 
         actual = QuestionAnswer.flatten_raw_json(question_answers)
+
+        self.assertEqual(actual, expected)
+
+
+class TalksTestCase(TestCase):
+    def test_from_raw_json(self):
+        data = [
+            {
+                "questionAnswers": [
+                    {
+                        "question": "Elevator Pitch",
+                        "answer": "エレガントに作ります",
+                    },
+                    {
+                        "question": "オーディエンスが持って帰れる具体的な知識やノウハウ",
+                        "answer": "テストを先に書いてRed\r\n実装してGreenという体験",
+                    },
+                    {
+                        "question": "オーディエンスに求める前提知識",
+                        "answer": "Pythonのunittestを使った経験",
+                    },
+                ],
+                "id": 123456,
+                "title": "Talksを作るテスト",
+                "description": "テストテストテスト",
+                "speakers": [{"name": "すごい人"}],
+                "categories": [
+                    {
+                        "name": "Track",
+                        "categoryItems": [{"name": "Machine learning"}],
+                    },
+                    {
+                        "name": "Level",
+                        "categoryItems": [{"name": "Advanced"}],
+                    },
+                    {
+                        "name": "Language",
+                        "categoryItems": [{"name": "English"}],
+                    },
+                    {
+                        "name": "発表資料の言語 / Language of presentation material",
+                        "categoryItems": [{"name": "English only"}],
+                    },
+                ],
+            }
+        ]
+        expected = Talks(
+            [
+                Talk(
+                    123456,
+                    "Talksを作るテスト",
+                    "テストテストテスト",
+                    Category(
+                        "Machine learning",
+                        "Advanced",
+                        "English",
+                        "English only",
+                    ),
+                    QuestionAnswer(
+                        "エレガントに作ります",
+                        "Pythonのunittestを使った経験",
+                        "テストを先に書いてRed\r\n実装してGreenという体験",
+                    ),
+                    [Speaker("すごい人")],
+                )
+            ]
+        )
+
+        actual = Talks.from_raw_json(data)
 
         self.assertEqual(actual, expected)

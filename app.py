@@ -88,3 +88,9 @@ class Talk:
     category: Category
     answer: QuestionAnswer
     speakers: list[Speaker]
+
+
+class Talks:
+    @classmethod
+    def from_raw_json(data):
+        raise NotImplementedError
