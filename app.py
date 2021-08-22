@@ -197,22 +197,26 @@ def fetch_talks(url):
 CARD_HTML_TEMPLATE = """
 <div class="card p-3">
   <h5 class="card-title">{title} (by {speakers})</h5>
-  <h6 class="card-subtitle mb-2 text-muted">{elevator_pitch}</h6>
+  <div class="p-2 bg-light">
+    <h6 class="card-subtitle mb-2 text-muted">{elevator_pitch}</h6>
+  </div>
   <div>
     <dl>
       <dt>Track</dt>
-      <dd>
+      <dd class="p-2">
         <span class="badge rounded-pill bg-info text-dark">{track}</span>
       </dd>
       <dt>Python knowledge of audience</dt>
-      <dd>{python_level}</dd>
+      <dd class="p-2">{python_level}</dd>
       <dt>Language</dt>
-      <dd>{speaking_language} (Speak) / {slide_language} (Material)</dd>
+      <dd class="p-2">
+        {speaking_language} (Speak) / {slide_language} (Material)
+      </dd>
       <dt>Prior knowledges speakers assume the audience to have / 前提知識</dt>
-      <dd>{audience_prior_knowledge}</dd>
+      <dd class="p-3 bg-light">{audience_prior_knowledge}</dd>
       <dt>Knowledges and know-how the audience can get from talk
       / 持ち帰れる知識・ノウハウ</dt>
-      <dd>{audience_take_away}</dd>
+      <dd class="p-3 bg-light">{audience_take_away}</dd>
     </dl>
   </div>
 
@@ -224,7 +228,7 @@ CARD_HTML_TEMPLATE = """
     </a>
   </p>
   <div class="collapse" id="collapseDetail{i}">
-    <div class="card card-body">
+    <div class="card card-body bg-light">
       {description}
     </div>
   </div>
