@@ -135,7 +135,20 @@ class Talks(Sequence):
         return cls(sorted(talks, key=lambda t: t.id))
 
 
-# ---------- Functions to be used in Streamlit app ----------
+# ---------- Variables and functions to be used in Streamlit app ----------
+
+TRACKS = (
+    "Python core and around",
+    "Machine learning",
+    "Web programming",
+    "Visual / Game / Music",
+    "Outside of Python language",
+    "Approaching to social problem",
+    "Only for fun or try new technique",
+    "Anything else basically which doesn’t fall into the types "
+    "of topics above",
+)
+PYTHON_LEVELS = ("Beginner", "Intermediate", "Advanced", "Expert")
 
 
 @st.cache
@@ -219,6 +232,11 @@ data_load_state = st.text("Loading Data...")
 data = fetch_talks(url)
 talks = Talks.from_raw_json(data[0]["sessions"])
 data_load_state.text("Loading Data... Done!")
+
+selected_tracks = st.multiselect("Select track", TRACKS)
+selected_levels = st.multiselect("Select audience Python level", PYTHON_LEVELS)
+keyword_input = st.text_input("Keyword in title")
+is_english_only = st.checkbox("Only English talks")
 
 st.write("Found:", len(talks))
 
