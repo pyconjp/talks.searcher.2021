@@ -1,12 +1,19 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Sequence
 from dataclasses import dataclass
+from urllib.request import urlopen
+
+import streamlit as st
 
 
 def get_single_choice_category_value(category: dict) -> str:
     """sessionizeのAPIの返り値から単一選択項目の選択値を返す"""
     return category["categoryItems"][0]["name"]
+
+
+# ---------- Definition of Custom classes ----------
 
 
 @dataclass
@@ -104,6 +111,7 @@ class Talks(Sequence):
         return self.talks[key]
 
     @classmethod
+    @st.cache
     def from_raw_json(cls, data):
         talks = []
         for session in data:
@@ -124,3 +132,29 @@ class Talks(Sequence):
             )
             talks.append(talk)
         return cls(sorted(talks, key=lambda t: t.id))
+
+
+# ---------- Functions to be used in Streamlit app ----------
+
+
+@st.cache
+def fetch_talks(url):
+    with urlopen(url) as res:
+        data = json.load(res)
+    assert len(data) == 1, len(data)
+    return data
+
+
+# ---------- Streamlit app ----------
+
+endpoint_id = st.secrets["ENDPOINT_ID"]
+url = f"https://sessionize.com/api/v2/{endpoint_id}/view/Sessions"
+
+st.title("May you find great talks.")
+
+data_load_state = st.text("Loading Data...")
+data = fetch_talks(url)
+talks = Talks.from_raw_json(data[0]["sessions"])
+data_load_state.text("Loading Data... Done!")
+
+st.write("Found:", len(talks))
