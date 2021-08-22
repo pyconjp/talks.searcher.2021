@@ -78,3 +78,13 @@ class QuestionAnswer:
     @classmethod
     def from_raw_json(cls, question_answers):
         return cls(**cls.flatten_raw_json(question_answers))
+
+
+@dataclass
+class Talk:
+    id: int
+    title: str
+    description: str
+    category: Category
+    answer: QuestionAnswer
+    speakers: list[Speaker]
